@@ -64,7 +64,7 @@ pipeline {
 		    steps {
 		        echo 'Extracting Sample Data'
 		        sh '''
-		            MYSQL_PWD="${DB_PASSWORD)" mysql -u "${DB_USERNAME}"  \
+		            MYSQL_PWD="${DB_PASSWORD}" mysql -u "${DB_USERNAME}"  \
 		                -h "${DB_HOST}" -P "${DB_PORT}" "${DB_NAME}" \
 		                -e "SELECT * FROM EMPLOYEE LIMIT 500;" --batch \
 		                | sed 's/\\t/./g' > /tmp/jenkins-employee.csv
@@ -98,7 +98,6 @@ pipeline {
 		                DB_NAME = "${DB_NAME}"
 		                node --require ts-node/register --test test/*.controller.spec.ts
                     '''
-		            }
 		        }
 		    }
 		    post {
