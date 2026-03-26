@@ -1,0 +1,118 @@
+import { NextResponse, NextRequest } from "next/server";
+import prisma from "../../../../../lib/prisma";
+
+interface RouteParams {
+    params: {
+        id: string;
+    };
+}
+
+// GET: Fetch a single {{ModelName}} by ID
+export async function GET(request: NextRequest, { params }: RouteParams): Promise<NextResponse> {
+    try {
+        const id = parseInt(params.id);
+        
+        if (isNaN(id)) {
+            return NextResponse.json(
+                { error: 'Invalid ID format' },
+                { status: 400 }
+            );
+        }
+
+        const {{ModelName}} = await prisma.{{ModelName}}.findUnique({
+            where: { {{PrimaryKey}}: id }
+        });
+
+        if (!{{ModelName}}) {
+            return NextResponse.json(
+                { error: '{{EntityName}} not found' },
+                { status: 404 }
+            );
+        }
+
+        return NextResponse.json({ {{ModelName}} }, { status: 200 });
+    } catch (error: any) {
+        console.error('Error fetching {{ModelName}}:', error);
+        return NextResponse.json(
+            { error: 'Failed to fetch {{ModelName}}', details: error.message },
+            { status: 500 }
+        );
+    }
+}
+
+// PUT: Update a {{ModelName}} by ID
+export async function PUT(request: NextRequest, { params }: RouteParams): Promise<NextResponse> {
+    try {
+        const id = parseInt(params.id);
+        
+        if (isNaN(id)) {
+            return NextResponse.json(
+                { error: 'Invalid ID format' },
+                { status: 400 }
+            );
+        }
+
+        const { {{DataFields}} } = await request.json();
+
+        const {{ModelName}} = await prisma.{{ModelName}}.update({
+            where: { {{PrimaryKey}}: id },
+            data: {
+{{DataFieldAssignments}}
+            }
+        });
+
+        return NextResponse.json({ {{ModelName}} }, { status: 200 });
+    } catch (error: any) {
+        console.error('Error updating {{ModelName}}:', error);
+        
+        if (error.code === 'P2025') {
+            return NextResponse.json(
+                { error: '{{EntityName}} not found' },
+                { status: 404 }
+            );
+        }
+        
+        return NextResponse.json(
+            { error: 'Failed to update {{ModelName}}', details: error.message },
+            { status: 400 }
+        );
+    }
+}
+
+// DELETE: Delete a {{ModelName}} by ID
+export async function DELETE(request: NextRequest, { params }: RouteParams): Promise<NextResponse> {
+    try {
+        const id = parseInt(params.id);
+        
+        if (isNaN(id)) {
+            return NextResponse.json(
+                { error: 'Invalid ID format' },
+                { status: 400 }
+            );
+        }
+
+        const {{ModelName}} = await prisma.{{ModelName}}.delete({
+            where: { {{PrimaryKey}}: id }
+        });
+
+        return NextResponse.json({
+            message: '{{EntityName}} deleted successfully',
+            {{ModelName}}
+        }, { status: 200 });
+    } catch (error: any) {
+        console.error('Error deleting {{ModelName}}:', error);
+        
+        if (error.code === 'P2025') {
+            return NextResponse.json(
+                { error: '{{EntityName}} not found' },
+                { status: 404 }
+            );
+        }
+        
+        return NextResponse.json(
+            { error: 'Failed to delete {{ModelName}}', details: error.message },
+            { status: 500 }
+        );
+    }
+}
+

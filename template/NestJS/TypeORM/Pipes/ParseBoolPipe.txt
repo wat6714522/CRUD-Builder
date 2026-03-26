@@ -1,0 +1,18 @@
+import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from "@nestjs/common"; 
+
+@Injectable() 
+export class ParseBoolPipe implements PipeTransform<string, boolean>{
+    transform(value: string, metadata: ArgumentMetadata): boolean{
+        const normalizedValue = value.toLowerCase(); 
+
+        if(normalizedValue === "true" || normalizedValue === "1"){
+            return true; 
+        }
+
+        if(normalizedValue === "false" || normalizedValue === "0"){
+            return false;
+        }
+
+        throw new BadRequestException(`${metadata.data}) must be a valid boolean (true/false or 1/0`); 
+    }
+}

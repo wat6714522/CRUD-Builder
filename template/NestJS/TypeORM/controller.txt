@@ -1,0 +1,53 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { Create{{EntityName}}Dto } from '../dto/create-{{FileName}}.dto';
+import { Update{{EntityName}}Dto } from '../dto/update-{{FileName}}.dto';
+import { PaginationDto } from '../dto/pagination.dto';
+import { {{EntityName}}Service } from '../services/{{FileName}}.service';
+
+@Controller('{{FileName}}')
+export class {{EntityName}}Controller {
+  constructor(
+    @Inject({{EntityName}}Service)
+    private readonly {{CamelCaseName}}Service: {{EntityName}}Service,
+  ) {}
+
+  @Get()
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.{{CamelCaseName}}Service.findAll(paginationDto);
+  }
+
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.{{CamelCaseName}}Service.findOne(id);
+  }
+
+  @Post()
+  create(@Body() dto: Create{{EntityName}}Dto) {
+    return this.{{CamelCaseName}}Service.create(dto);
+  }
+
+  @Patch(':{{PrimaryKeyField}}')
+  update(
+    @Param('{{PrimaryKeyField}}', ParseIntPipe) {{PrimaryKeyField}}: {{PrimaryKeyType}},
+    @Body()
+    body: Update{{EntityName}}Dto,
+  ) {
+      return this.{{CamelCaseName}}Service.update({{PrimaryKeyField}}, body);
+  }
+
+  @Delete(':{{PrimaryKeyField}}')
+  delete(@Param('{{PrimaryKeyField}}', ParseIntPipe) {{PrimaryKeyField}}: {{PrimaryKeyType}}) {
+    return this.{{CamelCaseName}}Service.remove({{PrimaryKeyField}});
+  }
+}

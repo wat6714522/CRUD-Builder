@@ -1,0 +1,31 @@
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
+
+export const DatabaseConfig = {
+  TYPE: (process.env.DB_TYPE as 'postgres' | 'mysql' | 'mariadb' | 'sqlite') || 'postgres',
+  HOST: process.env.DB_HOST || 'localhost',
+  PORT: parseInt(process.env.DB_PORT || '5432'),
+  USERNAME: process.env.DB_USERNAME || 'postgres',
+  PASSWORD: process.env.DB_PASSWORD || 'password',
+  DATABASE: process.env.DB_NAME || 'myapp',
+  SYNCHRONIZE: process.env.DB_SYNCHRONIZE === 'true' || false,
+  LOGGING: process.env.DB_LOGGING === 'true' || false,
+  
+  // Additional TypeORM options
+  SSL: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  RETRY_ATTEMPTS: parseInt(process.env.DB_RETRY_ATTEMPTS || '3'),
+  RETRY_DELAY: parseInt(process.env.DB_RETRY_DELAY || '3000'),
+  MAX_QUERY_EXECUTION_TIME: parseInt(process.env.DB_MAX_QUERY_TIME || '5000'),
+  
+  // Connection pool settings
+  CONNECTION_POOL: {
+    max: parseInt(process.env.DB_CONNECTION_LIMIT || '10'),
+    min: parseInt(process.env.DB_CONNECTION_MIN || '1'),
+    acquireTimeoutMillis: parseInt(process.env.DB_ACQUIRE_TIMEOUT || '60000'),
+    idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT || '30000'),
+  }
+};
+
+export default DatabaseConfig;

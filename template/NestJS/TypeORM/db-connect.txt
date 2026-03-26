@@ -1,0 +1,62 @@
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
+import * as path from 'path';
+
+export const databaseConfig = async (
+  config: ConfigService,
+): Promise<TypeOrmModuleOptions> => {
+  const dbType = config.get<string>('DB_TYPE');
+  const dbHost = config.get<string>('DB_HOST');
+  const dbPort = config.get<string>('DB_PORT');
+  const dbUsername = config.get<string>('DB_USERNAME');
+  const dbPassword = config.get<string>('DB_PASSWORD');
+  const dbName = config.get<string>('DB_NAME');
+
+  // Validate required environment variables
+  if (!dbType) {
+    throw new Error('DB_TYPE environment variable is required. Supported values: postgres, mysql, mariadb, sqlite');
+  }
+  if (!dbHost) {
+    throw new Error('DB_HOST environment variable is required');
+  }
+  if (!dbPort) {
+    throw new Error('DB_PORT environment variable is required');
+  }
+  if (!dbUsername) {
+    throw new Error('DB_USERNAME environment variable is required');
+  }
+  if (!dbPassword) {
+    throw new Error('DB_PASSWORD environment variable is required');
+  }
+  if (!dbName) {
+    throw new Error('DB_NAME environment variable is required');
+  }
+
+  // Validate database type
+  const supportedTypes = ['postgres', 'mysql', 'mariadb', 'sqlite', 'better-sqlite3'];
+  if (!supportedTypes.includes(dbType.toLowerCase())) {
+    throw new Error(`Unsupported database type: ${dbType}. Supported types: ${supportedTypes.join(', ')}`);
+  }
+
+  console.log(`🔧 Database Configuration: ${dbType} at ${dbHost}:${dbPort}/${dbName}`);
+
+  return {
+    type: dbType as any,
+    host: dbHost,
+    port: parseInt(dbPort, 10),
+    username: dbUsername,
+    password: dbPassword,
+    database: dbName,
+    synchronize: process.env.NODE_ENV === 'development', // Only in development
+    logging: process.env.NODE_ENV === 'development' ? 'all' : false,
+    logger: 'advanced-console',
+    entities: [path.join(__dirname, '..', '**', '*.entity.{ts,js}')],
+    migrations: [path.join(__dirname, '..', 'migrations', '*.{ts,js}')],
+    migrationsRun: false,
+    extra: {
+      connectionLimit: 10,
+      acquireTimeout: 60000,
+      timeout: 60000,
+    },
+  } as TypeOrmModuleOptions;
+};

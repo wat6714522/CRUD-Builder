@@ -1,0 +1,109 @@
+{
+     "name": "crud-builder",
+     "version": "1.0.4",
+     "description": "A CLI tool that generates CRUD operations for ExpressJS, NestJS, and NextJS frameworks ",
+     "bin": {
+          "crud": "bin/index.js"
+     },
+     "main": "./bin/index.js",
+     "type": "module",
+     "files": [
+          "bin/",
+          "src/",
+          "template/",
+          "README.md",
+          "package.json"
+     ],
+     "homepage": "https://github.com/wat671422/CRUD-Builder#readme",
+     "repository": {
+          "type": "git",
+          "url": "git+https://github.com/wat6714522/CRUD-Builder.git"
+     },
+     "bugs": {
+          "url": "https://github.com/wat6714522/CRUD-Builder/issues"
+     },
+     "engines": {
+          "node": ">=18.0.0",
+          "npm": ">=8.0.0"
+     },
+     "scripts": {
+          "start": "node ./bin/index.js",
+          "test": "node --test",
+          "test:coverage": "node --test --experimental-test-coverage",
+          "lint": "eslint src/ bin/",
+          "lint:fix": "eslint src/ bin/ --fix",
+          "format": "prettier --write \"src/**/*.js\" \"bin/**/*.js\"",
+          "format:check": "prettier --check \"src/**/*.js\" \"bin/**/*.js\"",
+          "prepare": "husky",
+          "build": "echo 'Build complete - CLI tool ready'",
+          "prepublishOnly": "npm run lint && npm run test && npm run format:check",
+          "preversion": "npm run lint && npm run test",
+          "postversion": "git push && git push --tags",
+          "release:patch": "npm version patch",
+          "release:minor": "npm version minor",
+          "release:major": "npm version major"
+     },
+     "lint-staged": {
+          "*.{js, ts, jsx, tsx}": [
+               "eslint --fix",
+               "prettier --write"
+          ],
+          "*.{json, md, yml, css}": [
+               "prettier --write"
+          ]
+     },
+     "dependencies": {
+          "@nestjs/common": "^10.0.0",
+          "@nestjs/config": "^4.0.3",
+          "@nestjs/core": "^10.0.0",
+          "@nestjs/typeorm": "^10.0.0",
+          "@prisma/client": "^6.17.1",
+          "@types/node": "^20.0.0",
+          "chalk": "^5.4.1",
+          "class-transformer": "^0.5.1",
+          "class-validator": "^0.14.0",
+          "commander": "^14.0.0",
+          "csv-parser": "^3.2.0",
+          "dotenv": "^17.2.3",
+          "fse": "^4.0.1",
+          "mysql2": "^3.15.2",
+          "pg": "^8.11.0",
+          "prisma": "^6.12.0",
+          "reflect-metadata": "^0.1.13",
+          "sqlite3": "^6.0.1",
+          "typeorm": "^0.3.6",
+          "typescript": "^5.0.0"
+     },
+     "devDependencies": {
+          "@babel/core": "^7.28.0",
+          "@babel/preset-env": "^7.28.0",
+          "babel-jest": "^30.0.5",
+          "eslint": "^9.33.0",
+          "eslint-config-prettier": "^10.1.8",
+          "eslint-plugin-prettier": "^5.5.4",
+          "husky": "^9.1.7",
+          "jest": "^30.0.5",
+          "lint-staged": "^16.4.0",
+          "prettier": "^3.6.2"
+     },
+     "keywords": [
+          "cli",
+          "cli-tool",
+          "crud",
+          "crud-generator",
+          "expressjs",
+          "nestjs",
+          "nextjs",
+          "typeorm",
+          "prisma",
+          "boilerplate",
+          "code-generator",
+          "scaffold",
+          "typescript",
+          "mysql",
+          "postgresql",
+          "rest-api"
+     ],
+     "license": "ISC",
+     "author": "P&P Squad"
+}

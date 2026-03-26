@@ -1,0 +1,43 @@
+# Application Environment
+NODE_ENV=development
+PORT=3000
+
+# Database Configuration
+DB_TYPE=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_USERNAME=""
+DB_PASSWORD=""
+DB_NAME=ITX3010
+
+# TypeORM Options
+DB_SYNCHRONIZE=true
+DB_LOGGING=true
+
+# Performance Settings
+DB_MAX_QUERY_TIME=5000
+DB_RETRY_ATTEMPTS=3
+DB_RETRY_DELAY=3000
+
+# Connection Pool Settings
+DB_CONNECTION_LIMIT=10
+DB_CONNECTION_MIN=1
+DB_ACQUIRE_TIMEOUT=60000
+DB_IDLE_TIMEOUT=30000
+
+# SSL Settings (for production)
+# DB_SSL_REJECT_UNAUTHORIZED=true
+
+# Redis Cache (optional)
+# REDIS_HOST=localhost
+# REDIS_PORT=6379
+# REDIS_PASSWORD=
+
+# Other common database configurations:
+# For MySQL/MariaDB, use:
+# DB_TYPE=mysql
+# DB_PORT=3306
+
+# For SQLite, use:
+# DB_TYPE=sqlite
+# DB_NAME=./database.sqlite

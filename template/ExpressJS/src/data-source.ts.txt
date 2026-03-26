@@ -1,0 +1,22 @@
+import "reflect-metadata";
+import { DataSource } from "typeorm";
+import { DatabaseConfig } from "./configs/config";
+
+// Import entities
+
+// TypeORM DataSource configuration
+export const AppDataSource = new DataSource({
+  type: DatabaseConfig.TYPE as any,
+  host: DatabaseConfig.HOST,
+  port: DatabaseConfig.PORT,
+  username: DatabaseConfig.USERNAME,
+  password: DatabaseConfig.PASSWORD,
+  database: DatabaseConfig.DATABASE,
+  synchronize: DatabaseConfig.SYNCHRONIZE,
+  logging: DatabaseConfig.LOGGING,
+  entities: [
+    // Entities
+  ],
+  migrations: [],
+  subscribers: [],
+});

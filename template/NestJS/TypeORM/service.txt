@@ -1,0 +1,57 @@
+import { Injectable, NotFoundException, ConflictException, Inject } from '@nestjs/common';
+import { Repository, UpdateResult, DeleteResult } from 'typeorm';
+import { Create{{EntityName}}Dto } from '../dto/create-{{FileName}}.dto';
+import { Update{{EntityName}}Dto } from '../dto/update-{{FileName}}.dto';
+import { PaginationDto } from '../dto/pagination.dto';
+import type { {{EntityName}} } from '../entities/{{FileName}}.entity';
+
+@Injectable()
+export class {{EntityName}}Service {
+    constructor(
+        @Inject('{{EntityName}}')
+        private readonly {{CamelCaseName}}Repository: Repository<{{EntityName}}>,
+    ) {}
+
+    async findOne({{PrimaryKeyField}}: {{PrimaryKeyType}}): Promise<{{EntityName}}> {
+        const {{CamelCaseName}} = await this.{{CamelCaseName}}Repository.findOneBy({ {{PrimaryKeyField}} } as any);
+        if (!{{CamelCaseName}}) {
+            throw new NotFoundException(`{{EntityName}} with {{PrimaryKeyField}} ${{{PrimaryKeyField}}} not found`);
+        }
+        return {{CamelCaseName}};
+    }
+
+    async findAll(paginationDto: PaginationDto): Promise<{{EntityName}}[]> {
+        return await this.{{CamelCaseName}}Repository.find({
+            skip: paginationDto.skip,
+            take: paginationDto.limit ?? 10,
+        });
+    }
+
+    async create(dto: Create{{EntityName}}Dto): Promise<{{EntityName}}> {
+        try {
+            const {{CamelCaseName}} = this.{{CamelCaseName}}Repository.create(dto);
+            return await this.{{CamelCaseName}}Repository.save({{CamelCaseName}});
+        } catch (error: any) {
+            if (error.code === 'ER_DUP_ENTRY' || error.errno === 1062) {
+                throw new ConflictException(`{{EntityName}} with duplicate unique field already exists`);
+            }
+            throw error;
+        }
+    }
+
+    async update({{PrimaryKeyField}}: {{PrimaryKeyType}}, dto: Update{{EntityName}}Dto): Promise<{{EntityName}}> {
+        const result = await this.{{CamelCaseName}}Repository.update({ {{PrimaryKeyField}} }, dto);
+        if (result.affected === 0) {
+            throw new NotFoundException(`{{EntityName}} with {{PrimaryKeyField}} ${{{PrimaryKeyField}}} not found`);
+        }
+        return await this.findOne({{PrimaryKeyField}});
+    }
+
+    async remove({{PrimaryKeyField}}: {{PrimaryKeyType}}): Promise<DeleteResult> {
+        const result = await this.{{CamelCaseName}}Repository.delete({ {{PrimaryKeyField}} });
+        if (result.affected === 0) {
+            throw new NotFoundException(`{{EntityName}} with {{PrimaryKeyField}} ${{{PrimaryKeyField}}} not found`);
+        }
+        return result;
+    }
+}

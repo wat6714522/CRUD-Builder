@@ -1,0 +1,266 @@
+import { Request, Response } from "express";
+import { validate } from "class-validator";
+import { plainToClass } from "class-transformer";
+import { {{EntityNameSingularPascalCase}} } from "../entities/{{EntityNameSingularPascalCase}}";
+import { {{EntityNameSingularCamelCase}}Repository } from "../repositories/{{EntityNameSingularPascalCase}}Repository";
+import { AppConfig } from "../configs/config";
+
+export class {{EntityNameSingularPascalCase}}Controller {
+  // GET /{{EntityNamePluralKebabCase}} - Find all {{EntityNamePluralMiddleSentenceCase}} with pagination
+  static async findAll(request: Request, response: Response): Promise<void> {
+    try {
+      const page = parseInt(request.query.page as string) || 1;
+      const limit = parseInt(request.query.limit as string) || 10;
+
+      if (page < 1) {
+        response.status(400).json({
+          status: "FAILED",
+          message: "Page number must be greater than 0",
+          version: AppConfig.VERSION,
+          timestamp: new Date().toISOString(),
+        });
+        return;
+      }
+
+      if (limit < 1 || limit > 100) {
+        response.status(400).json({
+          status: "FAILED",
+          message: "Limit must be between 1 and 100",
+          version: AppConfig.VERSION,
+          timestamp: new Date().toISOString(),
+        });
+        return;
+      }
+
+      const result = await {{EntityNameSingularCamelCase}}Repository.findAll(page, limit);
+
+      response.json({
+        status: "SUCCESS",
+        message: "{{EntityNamePluralStartSentenceCase}} retrieved successfully",
+        version: AppConfig.VERSION,
+        timestamp: new Date().toISOString(),
+        data: {
+          results: result.data,
+          pagination: {
+            total: result.total,
+            page: result.page,
+            pageSize: limit,
+            totalPages: result.totalPages,
+          },
+        },
+      });
+    } catch (error) {
+      console.error("Error in findAll:", error);
+      response.status(500).json({
+        status: "FAILED",
+        message: "Internal server error",
+        version: AppConfig.VERSION,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }
+
+  // GET /{{EntityNamePluralKebabCase}}/:id - Find one {{EntityNameSingularMiddleSentenceCase}} by ID
+  static async findOne(request: Request, response: Response): Promise<void> {
+    try {
+      const id = parseInt(request.params.id);
+
+      if (isNaN(id)) {
+        response.status(400).json({
+          status: "FAILED",
+          message: "Invalid {{EntityNameSingularMiddleSentenceCase}} ID",
+          version: AppConfig.VERSION,
+          timestamp: new Date().toISOString(),
+        });
+        return;
+      }
+
+      const {{EntityNameSingularCamelCase}} = await {{EntityNameSingularCamelCase}}Repository.findOne(id);
+
+      if (!{{EntityNameSingularCamelCase}}) {
+        response.status(404).json({
+          status: "FAILED",
+          message: "{{EntityNameSingularStartSentenceCase}} not found",
+          version: AppConfig.VERSION,
+          timestamp: new Date().toISOString(),
+        });
+        return;
+      }
+
+      response.json({
+        status: "SUCCESS",
+        message: "{{EntityNameSingularStartSentenceCase}} retrieved successfully",
+        version: AppConfig.VERSION,
+        timestamp: new Date().toISOString(),
+        data: {{EntityNameSingularCamelCase}},
+      });
+    } catch (error) {
+      console.error("Error in findOne:", error);
+      response.status(500).json({
+        status: "FAILED",
+        message: "Internal server error",
+        version: AppConfig.VERSION,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }
+
+  // POST /{{EntityNamePluralKebabCase}} - Create a new {{EntityNameSingularMiddleSentenceCase}}
+  static async create(request: Request, response: Response): Promise<void> {
+    try {
+      const {{EntityNameSingularCamelCase}}Data = plainToClass({{EntityNameSingularPascalCase}}, request.body);
+
+      // Validate the {{EntityNameSingularMiddleSentenceCase}} data
+      const errors = await validate({{EntityNameSingularCamelCase}}Data, { skipMissingProperties: true });
+
+      if (errors.length > 0) {
+        const validationErrors = errors.map((error) => ({
+          field: error.property,
+          constraints: error.constraints,
+        }));
+
+        response.status(400).json({
+          status: "FAILED",
+          message: "Validation failed",
+          version: AppConfig.VERSION,
+          timestamp: new Date().toISOString(),
+          data: validationErrors,
+        });
+        return;
+      }
+
+      const new{{EntityNameSingularPascalCase}} = await {{EntityNameSingularCamelCase}}Repository.create({{EntityNameSingularCamelCase}}Data);
+
+      response.status(201).json({
+        status: "SUCCESS",
+        message: "{{EntityNameSingularStartSentenceCase}} created successfully",
+        version: AppConfig.VERSION,
+        timestamp: new Date().toISOString(),
+        data: new{{EntityNameSingularPascalCase}},
+      });
+    } catch (error) {
+      console.error("Error in create:", error);
+      response.status(500).json({
+        status: "FAILED",
+        message: "Internal server error",
+        version: AppConfig.VERSION,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }
+
+  // PUT /{{EntityNamePluralKebabCase}}/:id - Update a {{EntityNameSingularMiddleSentenceCase}}
+  static async update(request: Request, response: Response): Promise<void> {
+    try {
+      const id = parseInt(request.params.id);
+
+      if (isNaN(id)) {
+        response.status(400).json({
+          status: "FAILED",
+          message: "Invalid {{EntityNameSingularMiddleSentenceCase}} ID",
+          version: AppConfig.VERSION,
+          timestamp: new Date().toISOString(),
+        });
+        return;
+      }
+
+      const existing{{EntityNameSingularPascalCase}} = await {{EntityNameSingularCamelCase}}Repository.findOne(id);
+      if (!existing{{EntityNameSingularPascalCase}}) {
+        response.status(404).json({
+          status: "FAILED",
+          message: "{{EntityNameSingularStartSentenceCase}} not found",
+          version: AppConfig.VERSION,
+          timestamp: new Date().toISOString(),
+        });
+        return;
+      }
+
+      // Create a {{EntityNameSingularMiddleSentenceCase}} object for validation
+      const {{EntityNameSingularCamelCase}}Data = plainToClass({{EntityNameSingularPascalCase}}, {
+        ...existing{{EntityNameSingularPascalCase}},
+        ...request.body,
+      });
+
+      // Validate the updated {{EntityNameSingularMiddleSentenceCase}} data
+      const errors = await validate({{EntityNameSingularCamelCase}}Data, { skipMissingProperties: true });
+
+      if (errors.length > 0) {
+        const validationErrors = errors.map((error) => ({
+          field: error.property,
+          constraints: error.constraints,
+        }));
+
+        response.status(400).json({
+          status: "FAILED",
+          message: "Validation failed",
+          version: AppConfig.VERSION,
+          timestamp: new Date().toISOString(),
+          data: validationErrors,
+        });
+        return;
+      }
+
+      const updated{{EntityNameSingularPascalCase}} = await {{EntityNameSingularCamelCase}}Repository.update(id, request.body);
+
+      response.json({
+        status: "SUCCESS",
+        message: "{{EntityNameSingularStartSentenceCase}} updated successfully",
+        version: AppConfig.VERSION,
+        timestamp: new Date().toISOString(),
+        data: updated{{EntityNameSingularPascalCase}},
+      });
+    } catch (error) {
+      console.error("Error in update:", error);
+      response.status(500).json({
+        status: "FAILED",
+        message: "Internal server error",
+        version: AppConfig.VERSION,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }
+
+  // DELETE /{{EntityNamePluralKebabCase}}/:id - Delete a {{EntityNameSingularMiddleSentenceCase}}
+  static async delete(request: Request, response: Response): Promise<void> {
+    try {
+      const id = parseInt(request.params.id);
+
+      if (isNaN(id)) {
+        response.status(400).json({
+          status: "FAILED",
+          message: "Invalid {{EntityNameSingularMiddleSentenceCase}} ID",
+          version: AppConfig.VERSION,
+          timestamp: new Date().toISOString(),
+        });
+        return;
+      }
+
+      const deleted = await {{EntityNameSingularCamelCase}}Repository.delete(id);
+
+      if (!deleted) {
+        response.status(404).json({
+          status: "FAILED",
+          message: "{{EntityNameSingularStartSentenceCase}} not found",
+          version: AppConfig.VERSION,
+          timestamp: new Date().toISOString(),
+        });
+        return;
+      }
+
+      response.json({
+        status: "SUCCESS",
+        message: "{{EntityNameSingularStartSentenceCase}} deleted successfully",
+        version: AppConfig.VERSION,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error("Error in delete:", error);
+      response.status(500).json({
+        status: "FAILED",
+        version: AppConfig.VERSION,
+        timestamp: new Date().toISOString(),
+        message: "Internal server error",
+      });
+    }
+  }
+}

@@ -1,0 +1,20 @@
+import { Router } from "express";
+import { AppConfig } from "../configs/config";
+
+// Import routes
+
+const router = Router();
+
+// API routes
+
+// Health check endpoint
+router.get("/health", (req, res) => {
+  res.json({
+    status: "SUCCESS",
+    message: `${AppConfig.NAME} is running`,
+    version: AppConfig.VERSION,
+    timestamp: new Date().toISOString(),
+  });
+});
+
+export default router;

@@ -1,0 +1,128 @@
+"use server";
+
+import prisma from "../prisma";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { z } from "zod";
+
+// Type definitions for {{EntityName}}
+interface Create{{EntityName}}Data {
+    {{DataFields}}: any;
+}
+
+interface Update{{EntityName}}Data {
+    {{PrimaryKey}}: number;
+    {{DataFields}}: any;
+}
+
+// Create a new {{EntityName}}
+export async function create{{EntityName}}(data: Create{{EntityName}}Data) {
+    try {
+        const {{ModelName}} = await prisma.{{ModelName}}.create({
+            data: {
+                {{DataFields}}: data.{{DataFields}}
+            }
+        });
+
+        revalidatePath('/{{KebabCaseName}}');
+        return { success: true, data: {{ModelName}} };
+    } catch (error: any) {
+        console.error('Error creating {{ModelName}}:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+// Read all {{ModelNames}}
+export async function read{{EntityName}}s() {
+    try {
+        const {{ModelNames}} = await prisma.{{ModelName}}.findMany({
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
+
+        return { success: true, data: {{ModelNames}} };
+    } catch (error: any) {
+        console.error('Error reading {{ModelNames}}:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+// Read a single {{EntityName}} by ID
+export async function read{{EntityName}}ById({{PrimaryKey}}: number) {
+    try {
+        const {{ModelName}} = await prisma.{{ModelName}}.findUnique({
+            where: { {{PrimaryKey}} }
+        });
+
+        if (!{{ModelName}}) {
+            return { success: false, error: '{{EntityName}} not found' };
+        }
+
+        return { success: true, data: {{ModelName}} };
+    } catch (error: any) {
+        console.error('Error reading {{ModelName}}:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+// Update a {{EntityName}}
+export async function update{{EntityName}}(data: Update{{EntityName}}Data) {
+    try {
+        const { {{PrimaryKey}}, ...updateData } = data;
+        
+        const {{ModelName}} = await prisma.{{ModelName}}.update({
+            where: { {{PrimaryKey}} },
+            data: updateData
+        });
+
+        revalidatePath('/{{KebabCaseName}}');
+        revalidatePath(`/{{KebabCaseName}}/${{{PrimaryKey}}}`);
+        return { success: true, data: {{ModelName}} };
+    } catch (error: any) {
+        console.error('Error updating {{ModelName}}:', error);
+        
+        if (error.code === 'P2025') {
+            return { success: false, error: '{{EntityName}} not found' };
+        }
+        
+        return { success: false, error: error.message };
+    }
+}
+
+// Delete a {{EntityName}}
+export async function delete{{EntityName}}({{PrimaryKey}}: number) {
+    try {
+        const {{ModelName}} = await prisma.{{ModelName}}.delete({
+            where: { {{PrimaryKey}} }
+        });
+
+        revalidatePath('/{{KebabCaseName}}');
+        return { success: true, data: {{ModelName}} };
+    } catch (error: any) {
+        console.error('Error deleting {{ModelName}}:', error);
+        
+        if (error.code === 'P2025') {
+            return { success: false, error: '{{EntityName}} not found' };
+        }
+        
+        return { success: false, error: error.message };
+    }
+}
+
+// Form action for creating {{EntityName}} (for use with forms)
+export async function create{{EntityName}}Action(formData: FormData) {
+    // Extract form data and call create{{EntityName}}
+    // This is a placeholder - implement based on your form fields
+    const data = {
+        // Map form fields to data object
+    };
+    
+    const result = await create{{EntityName}}(data);
+    
+    if (result.success) {
+        redirect('/{{KebabCaseName}}');
+    }
+    
+    return result;
+}

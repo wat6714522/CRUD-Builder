@@ -1,0 +1,65 @@
+import { Repository } from "typeorm";
+import { {{EntityNameSingularPascalCase}} } from "../entities/{{EntityNameSingularPascalCase}}";
+import { AppDataSource } from "../data-source";
+
+export class {{EntityNameSingularPascalCase}}Repository {
+  private repository: Repository<{{EntityNameSingularPascalCase}}>;
+
+  constructor() {
+    this.repository = AppDataSource.getRepository({{EntityNameSingularPascalCase}});
+  }
+
+  async findAll(
+    page: number = 1,
+    limit: number = 10
+  ): Promise<{
+    data: {{EntityNameSingularPascalCase}}[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    const [data, total] = await this.repository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+      order: {
+        createdAt: "DESC",
+      },
+    });
+
+    const totalPages = Math.ceil(total / limit);
+
+    return { data, total, page, totalPages };
+  }
+
+  async findOne(id: number): Promise<{{EntityNameSingularPascalCase}} | null> {
+    return await this.repository.findOne({
+      where: { id },
+    });
+  }
+
+  async create({{EntityNameSingularCamelCase}}Data: Partial<{{EntityNameSingularPascalCase}}>): Promise<{{EntityNameSingularPascalCase}}> {
+    const {{EntityNameSingularCamelCase}} = this.repository.create({{EntityNameSingularCamelCase}}Data);
+    return await this.repository.save({{EntityNameSingularCamelCase}});
+  }
+
+  async update(id: number, {{EntityNameSingularCamelCase}}Data: Partial<{{EntityNameSingularPascalCase}}>): Promise<{{EntityNameSingularPascalCase}} | null> {
+    const updateResult = await this.repository.update(id, {{EntityNameSingularCamelCase}}Data);
+
+    if (updateResult.affected === 0) {
+      return null;
+    }
+
+    return await this.findOne(id);
+  }
+
+  async delete(id: number): Promise<boolean> {
+    const deleteResult = await this.repository.delete(id);
+    return (
+      deleteResult.affected !== undefined &&
+      deleteResult.affected !== null &&
+      deleteResult.affected > 0
+    );
+  }
+}
+
+export const {{EntityNameSingularCamelCase}}Repository = new {{EntityNameSingularPascalCase}}Repository();

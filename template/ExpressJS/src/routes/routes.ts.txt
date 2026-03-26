@@ -1,0 +1,21 @@
+import { Router } from "express";
+import { {{EntityNameSingularPascalCase}}Controller } from "../controllers/{{EntityNameSingularPascalCase}}Controller";
+
+const router = Router();
+
+// GET /api/{{EntityNamePluralKebabCase}} - Get all {{EntityNamePluralMiddleSentenceCase}} with pagination
+router.get("/", {{EntityNameSingularPascalCase}}Controller.findAll);
+
+// GET /api/{{EntityNamePluralKebabCase}}/:id - Get {{EntityNameSingularMiddleSentenceCase}} by ID
+router.get("/:id", {{EntityNameSingularPascalCase}}Controller.findOne);
+
+// POST /api/{{EntityNamePluralKebabCase}} - Create new {{EntityNameSingularMiddleSentenceCase}}
+router.post("/", {{EntityNameSingularPascalCase}}Controller.create);
+
+// PUT /api/{{EntityNamePluralKebabCase}}/:id - Update {{EntityNameSingularMiddleSentenceCase}} by ID
+router.put("/:id", {{EntityNameSingularPascalCase}}Controller.update);
+
+// DELETE /api/{{EntityNamePluralKebabCase}}/:id - Delete {{EntityNameSingularMiddleSentenceCase}} by ID
+router.delete("/:id", {{EntityNameSingularPascalCase}}Controller.delete);
+
+export default router;

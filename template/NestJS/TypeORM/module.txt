@@ -1,0 +1,34 @@
+import { Module, ValidationPipe } from '@nestjs/common';
+import { {{EntityName}}Controller } from '../controllers/{{FileName}}.controller';
+import { APP_PIPE } from '@nestjs/core';
+import { {{EntityName}}Service } from '../services/{{FileName}}.service';
+import { {{EntityName}} } from '../entities/{{FileName}}.entity';
+import { Repository, Connection } from 'typeorm';
+
+@Module({
+  imports: [],
+  controllers: [{{EntityName}}Controller],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+        transformOptions: {
+          enableImplicitConversion: true,
+        },
+      }),
+    },
+    {
+      provide: '{{EntityName}}',
+      useFactory: (connection: Connection): Repository<{{EntityName}}> => {
+        return connection.getRepository({{EntityName}});
+      },
+      inject: [Connection],
+    },
+    {{EntityName}}Service,
+  ],
+})
+
+export class {{EntityName}}Module {}

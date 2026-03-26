@@ -1,0 +1,6 @@
+import 'reflect-metadata';
+import { IsInt, IsNumber, IsPositive, IsNegative, IsString, Length, IsNotEmpty, IsOptional, IsBoolean, IsDateString } from "class-validator";
+
+export class Create{{EntityName}}Dto {
+    {{DTOProperties}}
+}

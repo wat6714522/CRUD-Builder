@@ -1,0 +1,191 @@
+import { describe, it, before, after } from 'node:test';
+import assert from 'node:assert/strict';
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import request from 'supertest';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { {{EntityName}}Controller } from '../controllers/{{FileName}}.controller';
+import { {{EntityName}}Service } from '../services/{{FileName}}.service';
+import { {{EntityName}} } from '../entities/{{FileName}}.entity';
+import { Repository, Connection } from 'typeorm';
+
+describe('{{EntityName}}Controller (integration)', () => {
+  let app: INestApplication;
+  let repository: Repository<{{EntityName}}>;
+  const createdIds: number[] = [];
+
+  before(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        TypeOrmModule.forRoot({
+          type: (process.env.DB_TYPE || 'mysql') as any,
+          host: process.env.DB_HOST || 'localhost',
+          port: parseInt(process.env.DB_PORT || '3306', 10),
+          username: process.env.DB_USERNAME,
+          password: process.env.DB_PASSWORD,
+          database: process.env.DB_NAME,
+          entities: [{{EntityName}}],
+          synchronize: false,
+        }),
+      ],
+      controllers: [{{EntityName}}Controller],
+      providers: [
+        {
+          provide: '{{EntityName}}',
+          useFactory: (connection: Connection): Repository<{{EntityName}}> => {
+            return connection.getRepository({{EntityName}});
+          },
+          inject: [Connection],
+        },
+        {{EntityName}}Service,
+      ],
+    }).compile();
+
+    app = module.createNestApplication();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+      }),
+    );
+    await app.init();
+
+    repository = module.get<Repository<{{EntityName}}>>(
+      '{{EntityName}}',
+    );
+  });
+
+  after(async () => {
+    // Clean up test records
+    for (const id of createdIds) {
+      await repository.delete({ {{PrimaryKeyField}}: id } as any);
+    }
+    await app.close();
+  });
+
+  describe('GET /{{FileName}}', () => {
+    it('should return results from database', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/{{FileName}}?limit=10&skip=0')
+        .expect(200);
+
+      assert.ok(Array.isArray(response.body));
+    });
+
+    it('should respect pagination parameters', async () => {
+      const page1 = await request(app.getHttpServer())
+        .get('/{{FileName}}?limit=5&skip=0')
+        .expect(200);
+
+      const page2 = await request(app.getHttpServer())
+        .get('/{{FileName}}?limit=5&skip=5')
+        .expect(200);
+
+      assert.equal(page1.body.length, 5);
+      assert.equal(page2.body.length, 5);
+    });
+  });
+
+  describe('GET /{{FileName}}/:id', () => {
+    it('should return a single entity by id', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/{{FileName}}/1')
+        .expect(200);
+
+      assert.equal(response.body.{{PrimaryKeyField}}, 1);
+    });
+
+    it('should return 404 when entity not found', async () => {
+      await request(app.getHttpServer())
+        .get('/{{FileName}}/99999')
+        .expect(404);
+    });
+  });
+
+  describe('POST /{{FileName}}', () => {
+    it('should create a new entity', async () => {
+      const entities = await repository.find({ take: 1 });
+      const sample = { ...entities[0] } as any;
+      delete sample.{{PrimaryKeyField}};
+      delete sample.created_at;
+      delete sample.updated_at;
+
+      // Make string fields unique to avoid duplicate key violations
+      const suffix = `_test_${Date.now()}`;
+      for (const key of Object.keys(sample)) {
+        if (typeof sample[key] === 'string') {
+          sample[key] = sample[key].substring(0, 50) + suffix;
+        }
+      }
+
+      const response = await request(app.getHttpServer())
+        .post('/{{FileName}}')
+        .send(sample)
+        .expect(201);
+
+      assert.ok(response.body.{{PrimaryKeyField}} !== undefined);
+      createdIds.push(response.body.{{PrimaryKeyField}});
+    });
+
+    it('should return 409 on duplicate unique fields', async () => {
+      const entities = await repository.find({ take: 1 });
+      const duplicate = { ...entities[0] } as any;
+      delete duplicate.{{PrimaryKeyField}};
+      delete duplicate.created_at;
+      delete duplicate.updated_at;
+
+      await request(app.getHttpServer())
+        .post('/{{FileName}}')
+        .send(duplicate)
+        .expect(409);
+    });
+
+    it('should return 400 on invalid body', async () => {
+      await request(app.getHttpServer())
+        .post('/{{FileName}}')
+        .send({ invalidField: 'bad' })
+        .expect(400);
+    });
+  });
+
+  describe('PATCH /{{FileName}}/:id', () => {
+    it('should update an existing entity', async () => {
+      const response = await request(app.getHttpServer())
+        .patch('/{{FileName}}/1')
+        .send({})
+        .expect(200);
+
+      assert.equal(response.body.{{PrimaryKeyField}}, 1);
+    });
+
+    it('should return 404 when entity not found', async () => {
+      await request(app.getHttpServer())
+        .patch('/{{FileName}}/99999')
+        .send({})
+        .expect(404);
+    });
+  });
+
+  describe('DELETE /{{FileName}}/:id', () => {
+    it('should delete a test entity', async () => {
+      // Use the entity created by POST test
+      assert.ok(createdIds.length > 0, 'No test entity to delete — POST test must run first');
+      const deleteId = createdIds.pop();
+
+      await request(app.getHttpServer())
+        .delete(`/{{FileName}}/${deleteId}`)
+        .expect(200);
+
+      const found = await repository.findOneBy({ {{PrimaryKeyField}}: deleteId } as any);
+      assert.equal(found, null);
+    });
+
+    it('should return 404 when entity not found', async () => {
+      await request(app.getHttpServer())
+        .delete('/{{FileName}}/99999')
+        .expect(404);
+    });
+  });
+});

@@ -1,0 +1,60 @@
+import { NextResponse, NextRequest } from "next/server";
+import prisma from "../../../../lib/prisma";
+
+// GET: Fetch all {{ModelNames}}
+export async function GET(req: NextRequest): Promise<NextResponse> {
+    try {
+        const {{ModelNames}} = await prisma.{{ModelName}}.findMany({
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
+
+        return NextResponse.json({ {{ModelNames}} }, { status: 200 });
+    } catch (error: any) {
+        console.error('Error fetching {{ModelNames}}:', error);
+        return NextResponse.json(
+            { error: 'Failed to fetch {{ModelNames}}', details: error.message },
+            { status: 500 }
+        );
+    }
+}
+
+// POST: Create a new {{ModelName}}
+export async function POST(req: NextRequest): Promise<NextResponse> {
+    try {
+        const { {{DataFields}} } = await req.json();
+        
+        const {{ModelName}} = await prisma.{{ModelName}}.create({
+            data: {
+{{DataFieldAssignments}}
+            }
+        });
+
+        return NextResponse.json({ {{ModelName}} }, { status: 201 });
+    } catch (error: any) {
+        console.error('Error creating {{ModelName}}:', error);
+        return NextResponse.json(
+            { error: 'Failed to create {{ModelName}}', details: error.message },
+            { status: 400 }
+        );
+    }
+}
+
+// DELETE: Delete all {{ModelNames}} (use with caution)
+export async function DELETE(req: NextRequest): Promise<NextResponse> {
+    try {
+        const result = await prisma.{{ModelName}}.deleteMany({});
+
+        return NextResponse.json({
+            message: `Deleted ${result.count} {{ModelNames}} successfully`,
+            count: result.count
+        }, { status: 200 });
+    } catch (error: any) {
+        console.error('Error deleting {{ModelNames}}:', error);
+        return NextResponse.json(
+            { error: 'Failed to delete {{ModelNames}}', details: error.message },
+            { status: 500 }
+        );
+    }
+}

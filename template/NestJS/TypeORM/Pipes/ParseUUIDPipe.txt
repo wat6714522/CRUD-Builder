@@ -1,0 +1,76 @@
+import {
+  PipeTransform,
+  Injectable,
+  ArgumentMetadata,
+  BadRequestException,
+} from "@nestjs/common";
+
+export enum UUIDVersion {
+  v1 = "1",
+  v2 = "2",
+  v3 = "3",
+  v4 = "4",
+  v5 = "5",
+}
+
+export interface ParseUUIDPipeOptions {
+  version?: UUIDVersion;
+  optional?: boolean;
+}
+
+@Injectable()
+export class ParseUUIDPipe implements PipeTransform<string, string> {
+  private readonly version?: UUIDVersion;
+  private readonly optional: boolean;
+
+  constructor(options: ParseUUIDPipeOptions = {}) {
+    this.version = options.version;
+    this.optional = options.optional ?? false;
+  }
+
+  transform(value: string, metadata: ArgumentMetadata): string {
+    if (!value) {
+      if (this.optional) {
+        return value;
+      }
+      throw new BadRequestException(`${metadata.data} should not be empty`);
+    }
+
+    if (!this.isUUID(value)) {
+      throw new BadRequestException(`${metadata.data} must be a valid UUID`);
+    }
+
+    if (this.version && !this.isUUIDVersion(value, this.version)) {
+      throw new BadRequestException(
+        `${metadata.data} must be a valid UUID v${this.version}`
+      );
+    }
+
+    return value;
+  }
+
+  private isUUID(value: string): boolean {
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(value);
+  }
+
+  private isUUIDVersion(value: string, version: UUIDVersion): boolean {
+    const versionRegex = new RegExp(
+      `^[0-9a-f]{8}-[0-9a-f]{4}-${version}[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`,
+      "i"
+    );
+    return versionRegex.test(value);
+  }
+}
+
+// Usage examples:
+// @Get(':id')
+// findOne(@Param('id', ParseUUIDPipe) id: string) {
+//   return this.service.findOne(id);
+// }
+//
+// @Get(':id')
+// findOne(@Param('id', new ParseUUIDPipe({ version: UUIDVersion['4'] })) id: string) {
+//   return this.service.findOne(id);
+// }

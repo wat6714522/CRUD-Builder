@@ -1,0 +1,66 @@
+import "reflect-metadata";
+import { DataSource } from "typeorm";
+import { DatabaseConfig } from "./configs/database-config";
+
+// Import your entities here
+// import { User } from "./entities/User";
+// import { Product } from "./entities/Product";
+
+// TypeORM DataSource configuration
+export const AppDataSource = new DataSource({
+  type: DatabaseConfig.TYPE as any,
+  host: DatabaseConfig.HOST,
+  port: DatabaseConfig.PORT,
+  username: DatabaseConfig.USERNAME,
+  password: DatabaseConfig.PASSWORD,
+  database: DatabaseConfig.DATABASE,
+  synchronize: DatabaseConfig.SYNCHRONIZE,
+  logging: DatabaseConfig.LOGGING,
+  ssl: DatabaseConfig.SSL as any,
+  
+  entities: [
+    // Add your entity classes here
+    // User,
+    // Product,
+    
+    // Or use glob pattern to auto-discover entities
+    "src/entities/**/*.{ts,js}"
+  ],
+  
+  migrations: [
+    "src/migrations/**/*.{ts,js}"
+  ],
+  
+  subscribers: [
+    "src/subscribers/**/*.{ts,js}"
+  ],
+});
+
+// Initialize database connection
+export const initializeDatabase = async (): Promise<DataSource> => {
+  try {
+    if (!AppDataSource.isInitialized) {
+      await AppDataSource.initialize();
+      console.log("✅ Database connection established successfully!");
+    }
+    return AppDataSource;
+  } catch (error) {
+    console.error("❌ Error during database initialization:", error);
+    throw error;
+  }
+};
+
+// Close database connection
+export const closeDatabase = async (): Promise<void> => {
+  try {
+    if (AppDataSource.isInitialized) {
+      await AppDataSource.destroy();
+      console.log("✅ Database connection closed successfully!");
+    }
+  } catch (error) {
+    console.error("❌ Error during database closure:", error);
+    throw error;
+  }
+};
+
+export default AppDataSource;

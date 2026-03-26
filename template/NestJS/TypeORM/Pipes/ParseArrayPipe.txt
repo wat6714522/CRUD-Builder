@@ -1,0 +1,62 @@
+import {
+  PipeTransform,
+  Injectable,
+  ArgumentMetadata,
+  BadRequestException,
+} from "@nestjs/common";
+
+export interface ParseArrayPipeOptions {
+  items?: PipeTransform | Function;
+  separator?: string;
+  optional?: boolean;
+}
+
+@Injectable()
+export class ParseArrayPipe implements PipeTransform {
+  private readonly separator: string;
+  private readonly items?: PipeTransform | Function;
+  private readonly optional: boolean;
+
+  constructor(options: ParseArrayPipeOptions = {}) {
+    this.separator = options.separator ?? ",";
+    this.items = options.items;
+    this.optional = options.optional ?? false;
+  }
+
+  transform(value: string | string[], metadata: ArgumentMetadata): any[] {
+    if (!value) {
+      if (this.optional) {
+        return [];
+      }
+      throw new BadRequestException(`${metadata.data} should not be empty`);
+    }
+
+    let array: string[];
+
+    if (Array.isArray(value)) {
+      array = value;
+    } else {
+      array = value.split(this.separator);
+    }
+
+    if (this.items) {
+      return array.map((item, index) => {
+        try {
+          if (typeof this.items === "function") {
+            return this.items(item.trim());
+          }
+          return (this.items as PipeTransform).transform(item.trim(), {
+            ...metadata,
+            data: `${metadata.data}[${index}]`,
+          });
+        } catch (error) {
+          throw new BadRequestException(
+            `${metadata.data}[${index}] ${error.message}`
+          );
+        }
+      });
+    }
+
+    return array.map((item) => item.trim());
+  }
+}
