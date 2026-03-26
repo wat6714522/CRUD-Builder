@@ -34,8 +34,7 @@ pipeline {
 				echo 'Performing App Repository Update'
 				sh "apt-get update || sudo apt-get update"
 				echo "Finished Performing App Repository Update"
-			}
-			steps{
+
 			    echo 'Installing System Dependency'
 			    sh "apt-get install -y mysql-client || sudo apt-get install -y mysql-client"
 			    echo 'Finished Installing System Dependency'
@@ -71,8 +70,7 @@ pipeline {
 		                | sed 's/\\t/./g' > /tmp/jenkins-employee.csv
                 '''
                 echo 'Finished Extracting Sample Data'
-		    }
-		    steps {
+
                 echo 'Generating the NestJS Application'
                 sh '''
                     node bin/index.js NestJS generate /tmp/jenkins-employee.csv all \
@@ -83,8 +81,7 @@ pipeline {
                     sh "npm install"
                 }
                 echo 'Finished Generating the NestJS Application'
-		    }
-		    steps {
+
 		        echo "Performing Integration Testing"
 
 		        dir("/tmp/jenkins-crud-test") {
@@ -101,6 +98,7 @@ pipeline {
 		                DB_NAME = "${DB_NAME}"
 		                node --require ts-node/register --test test/*.controller.spec.ts
                     '''
+		            }
 		        }
 		    }
 		    post {
