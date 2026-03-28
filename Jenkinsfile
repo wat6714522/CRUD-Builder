@@ -90,6 +90,7 @@ pipeline {
 		    }
 		    steps {
 		        sh '''
+		            echo "//registry.npmjs.org/:_authToken=${NPM_Token}" > ~/.npmrc
 		            echo "Publishing to NPM"
 		            npm publish --access public
 		        '''
