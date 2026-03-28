@@ -29,29 +29,6 @@ pipeline {
 			}
 		}
 
-		stage("Install Denpendencies"){
-			steps {
-				echo 'Performing App Repository Update'
-				sh "apt-get update"
-				echo "Finished Performing App Repository Update"
-
-			    echo 'Installing System Dependency'
-			    sh "apt-get install -y mysql-client"
-			    echo 'Finished Installing System Dependency'
-			}
-		}
-
-		stage("Verify and Install NPM Packages"){
-		    steps {
-                echo "Verifying Installation"
-                sh "node --version"
-                sh "npm --version"
-
-                echo "Installing NPM Packages"
-                sh "npm ci"
-            }
-		}
-
 		stage("Build") {
 		    steps {
 		        echo 'Building Package'
