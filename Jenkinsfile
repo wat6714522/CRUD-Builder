@@ -85,7 +85,7 @@ pipeline {
 		    when {
 		        anyOf {
 		            tag pattern: 'v\\d+\\.\\d+\\.\\d+', comparator: 'REGEXP'
-		            branch 'master'
+		            expression { env.GIT_BRANCH == 'origin/master' }
 		        }
 		    }
 		    steps {
