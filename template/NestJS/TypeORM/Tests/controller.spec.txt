@@ -60,7 +60,7 @@ describe('{{EntityName}}Controller (integration)', () => {
   after(async () => {
     // Clean up test records
     for (const id of createdIds) {
-      await repository.delete({ {{PrimaryKeyField}}: id } as any);
+      await repository.delete({ "{{PrimaryKeyField}}": id } as any);
     }
     await app.close();
   });
@@ -94,7 +94,7 @@ describe('{{EntityName}}Controller (integration)', () => {
         .get('/{{FileName}}/1')
         .expect(200);
 
-      assert.equal(response.body.{{PrimaryKeyField}}, 1);
+      assert.equal(response.body["{{PrimaryKeyField}}"], 1);
     });
 
     it('should return 404 when entity not found', async () => {
@@ -108,7 +108,7 @@ describe('{{EntityName}}Controller (integration)', () => {
     it('should create a new entity', async () => {
       const entities = await repository.find({ take: 1 });
       const sample = { ...entities[0] } as any;
-      delete sample.{{PrimaryKeyField}};
+      delete sample["{{PrimaryKeyField}}"];
       delete sample.created_at;
       delete sample.updated_at;
 
@@ -125,14 +125,14 @@ describe('{{EntityName}}Controller (integration)', () => {
         .send(sample)
         .expect(201);
 
-      assert.ok(response.body.{{PrimaryKeyField}} !== undefined);
-      createdIds.push(response.body.{{PrimaryKeyField}});
+      assert.ok(response.body["{{PrimaryKeyField}}"] !== undefined);
+      createdIds.push(response.body["{{PrimaryKeyField}}"]);
     });
 
     it('should return 409 on duplicate unique fields', async () => {
       const entities = await repository.find({ take: 1 });
       const duplicate = { ...entities[0] } as any;
-      delete duplicate.{{PrimaryKeyField}};
+      delete duplicate["{{PrimaryKeyField}}"];
       delete duplicate.created_at;
       delete duplicate.updated_at;
 
@@ -157,7 +157,7 @@ describe('{{EntityName}}Controller (integration)', () => {
         .send({})
         .expect(200);
 
-      assert.equal(response.body.{{PrimaryKeyField}}, 1);
+      assert.equal(response.body["{{PrimaryKeyField}}"], 1);
     });
 
     it('should return 404 when entity not found', async () => {
@@ -178,7 +178,7 @@ describe('{{EntityName}}Controller (integration)', () => {
         .delete(`/{{FileName}}/${deleteId}`)
         .expect(200);
 
-      const found = await repository.findOneBy({ {{PrimaryKeyField}}: deleteId } as any);
+      const found = await repository.findOneBy({ "{{PrimaryKeyField}}": deleteId } as any);
       assert.equal(found, null);
     });
 

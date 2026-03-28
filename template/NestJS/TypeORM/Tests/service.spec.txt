@@ -41,7 +41,7 @@ describe('{{EntityName}}Service', () => {
 
   describe('findAll', () => {
     it('should return paginated results', async () => {
-      const expected = [{ {{PrimaryKeyField}}: 1 }];
+      const expected = [{ "{{PrimaryKeyField}}": 1 }];
       mockRepository.find.mock.mockImplementation(() => Promise.resolve(expected));
 
       const result = await service.findAll({ skip: 0, limit: 10 });
@@ -62,7 +62,7 @@ describe('{{EntityName}}Service', () => {
 
   describe('findOne', () => {
     it('should return entity by {{PrimaryKeyField}}', async () => {
-      const expected = { {{PrimaryKeyField}}: 1 };
+      const expected = { "{{PrimaryKeyField}}": 1 };
       mockRepository.findOneBy.mock.mockImplementation(() => Promise.resolve(expected));
 
       const result = await service.findOne(1);
@@ -86,7 +86,7 @@ describe('{{EntityName}}Service', () => {
   describe('create', () => {
     it('should create and return new entity', async () => {
       const dto = {};
-      const created = { {{PrimaryKeyField}}: 1, ...dto };
+      const created = { "{{PrimaryKeyField}}": 1, ...dto };
       mockRepository.create.mock.mockImplementation(() => created);
       mockRepository.save.mock.mockImplementation(() => Promise.resolve(created));
 
@@ -101,7 +101,7 @@ describe('{{EntityName}}Service', () => {
   describe('update', () => {
     it('should update and return entity', async () => {
       const dto = {};
-      const updated = { {{PrimaryKeyField}}: 1, ...dto };
+      const updated = { "{{PrimaryKeyField}}": 1, ...dto };
       mockRepository.update.mock.mockImplementation(() => Promise.resolve({ affected: 1 }));
       mockRepository.findOneBy.mock.mockImplementation(() => Promise.resolve(updated));
 

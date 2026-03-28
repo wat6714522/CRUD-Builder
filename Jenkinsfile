@@ -37,7 +37,7 @@ pipeline {
 		            MYSQL_PWD="${DB_PASSWORD}" mysql -u "${DB_USERNAME}"  \
 		                -h "${DB_HOST}" -P "${DB_PORT}" "${DB_NAME}" \
 		                -e "SELECT * FROM EMPLOYEE LIMIT 500;" --batch \
-		                | sed 's/\\t/./g' > /tmp/jenkins-employee.csv
+		                | sed 's/\t/,/g' > /tmp/jenkins-employee.csv
                 '''
                 echo 'Finished Extracting Sample Data'
 
