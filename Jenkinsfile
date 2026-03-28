@@ -67,7 +67,7 @@ pipeline {
 		                export DB_USERNAME="${DB_USERNAME}"
 		                export DB_PASSWORD="${DB_PASSWORD}"
 		                export DB_NAME="${DB_NAME}"
-		                node --require ts-node/register --test test/*.controller.spec.ts
+		                node --require ts-node/register --test tests/*.controller.spec.ts
                     '''
 		        }
 		    }
@@ -85,7 +85,7 @@ pipeline {
 		    when {
 		        anyOf {
 		            tag pattern: 'v\\d+\\.\\d+\\.\\d+', comparator: 'REGEXP'
-		            branch 'main'
+		            branch 'master'
 		        }
 		    }
 		    steps {
