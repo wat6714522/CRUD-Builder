@@ -32,11 +32,11 @@ pipeline {
 		stage("Install Denpendencies"){
 			steps {
 				echo 'Performing App Repository Update'
-				sh "apt-get update || sudo apt-get update"
+				sh "apt-get update"
 				echo "Finished Performing App Repository Update"
 
 			    echo 'Installing System Dependency'
-			    sh "apt-get install -y mysql-client || sudo apt-get install -y mysql-client"
+			    sh "apt-get install -y mysql-client"
 			    echo 'Finished Installing System Dependency'
 			}
 		}
@@ -90,12 +90,12 @@ pipeline {
 
 		        dir("/tmp/jenkins-crud-test") {
 		            sh '''
-		                DB_TYPE = "${DB_TYPE}" \
-		                DB_HOST = "${DB_HOST}" \
-		                DB_PORT = "${DB_PORT}" \
-		                DB_USERNAME = "${DB_USERNAME}" \
-		                DB_PASSWORD = "${DB_PASSWORD}" \
-		                DB_NAME = "${DB_NAME}"
+		                export DB_TYPE="${DB_TYPE}"
+		                export DB_HOST="${DB_HOST}"
+		                export DB_PORT="${DB_PORT}"
+		                export DB_USERNAME="${DB_USERNAME}"
+		                export DB_PASSWORD="${DB_PASSWORD}"
+		                export DB_NAME="${DB_NAME}"
 		                node --require ts-node/register --test test/*.controller.spec.ts
                     '''
 		        }
