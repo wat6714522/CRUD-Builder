@@ -72,7 +72,7 @@ pipeline {
 		        }
 		    }
 		    post {
-		        success {
+                always {
 		            sh '''
 		                rm -rf /tmp/jenkins-crud-test
 		                rm -rf /tmp/Employee.csv
