@@ -5,8 +5,8 @@ import { dBconnect } from "./connect.js";
 
 export const expressjs = new Command("ExpressJS")
 
-  .name("ExpressJS")
-  .description("CLIs for ExpressJS.")
-  .addCommand(create)
-  .addCommand(generate)
-  .addCommand(dBconnect);
+     .name("ExpressJS")
+     .description("CLIs for ExpressJS.")
+     .addCommand(create)
+     .addCommand(generate)
+     .addCommand(dBconnect);

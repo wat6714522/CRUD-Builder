@@ -4,8 +4,8 @@ import { generate } from "./generate.js";
 import { create } from "./create.js";
 
 export const nestjs = new Command("NestJS")
-  .name("NestJS")
-  .description("CLIs for NestJS.")
-  .addCommand(create)
-  .addCommand(generate)
-  .addCommand(dBconnect);
+     .name("NestJS")
+     .description("CLIs for NestJS.")
+     .addCommand(create)
+     .addCommand(generate)
+     .addCommand(dBconnect);
