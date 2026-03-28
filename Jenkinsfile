@@ -37,14 +37,14 @@ pipeline {
 		            MYSQL_PWD="${DB_PASSWORD}" mysql -u "${DB_USERNAME}"  \
 		                -h "${DB_HOST}" -P "${DB_PORT}" "${DB_NAME}" \
 		                -e "SELECT * FROM Employee LIMIT 500;" --batch \
-		                | tr '\t' ',' > /tmp/jenkins-employee.csv
+		                | tr '\t' ',' > /tmp/Employee.csv
                 '''
-                sh "head -2 /tmp/jenkins-employee.csv"
+                sh "head -2 /tmp/Employee.csv"
                 echo 'Finished Extracting Sample Data'
 
                 echo 'Generating the NestJS Application'
                 sh '''
-                    node bin/index.js NestJS generate /tmp/jenkins-employee.csv all \
+                    node bin/index.js NestJS generate /tmp/Employee.csv all \
                         --directory /tmp/jenkins-crud-test
                 '''
 
@@ -75,7 +75,7 @@ pipeline {
 		        success {
 		            sh '''
 		                rm -rf /tmp/jenkins-crud-test
-		                rm -rf /tmp/jenkins-employee.csv
+		                rm -rf /tmp/Employee.csv
                     '''
 		        }
 		    }
