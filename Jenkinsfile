@@ -21,23 +21,16 @@ pipeline {
 	}
 
 	stages {
-		stage("Checkout") {
-			steps {
-				echo 'Checking Github Repository'
-				checkout scm
-				echo 'Finished checking Github Repository'
-			}
-		}
 
 		stage("Build") {
 		    steps {
 		        echo 'Building Package'
-		        sh "npm run build"
+		        sh "npm install"
 		        echo 'Finished Building Package'
 		    }
 		}
 
-		stage("Integration Test") {
+		stage("Test") {
 		    steps {
 		        echo 'Extracting Sample Data'
 		        sh '''
