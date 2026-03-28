@@ -7,7 +7,7 @@ pipeline {
 
 	environment {
 		NPM_Token = credentials("npm-token")
-		DB_TYPE = "MariaDB"
+		DB_TYPE = "mariadb"
 		DB_HOST = "192.168.1.116"
 		DB_PORT = "3306"
 		DB_USERNAME = credentials("db-username")
