@@ -36,7 +36,7 @@ pipeline {
 		        sh '''
 		            MYSQL_PWD="${DB_PASSWORD}" mysql -u "${DB_USERNAME}"  \
 		                -h "${DB_HOST}" -P "${DB_PORT}" "${DB_NAME}" \
-		                -e "SELECT * FROM EMPLOYEE LIMIT 500;" --batch \
+		                -e "SELECT * FROM Employee LIMIT 500;" --batch \
 		                | tr '\t' ',' > /tmp/jenkins-employee.csv
                 '''
                 sh "head -2 /tmp/jenkins-employee.csv"
